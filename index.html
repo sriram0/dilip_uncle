@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title></title>
+    <style>
+        body {
+            background-color: black;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="main"></canvas>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.7/lib/p5.min.js"></script>
+    <script>
+        let badge;
+
+        function setup() {
+            createCanvas(500, 500, $("#main"))
+            noStroke()
+            colorMode(HSB)
+            badge= loadImage("badge2.png")
+        }
+
+        let meteor = [250, -1000, 0, true]
+        let t = 0;
+        let fragments = []
+
+        function draw() {
+            background(0, 0, 0)
+            
+
+            if (meteor[3]) {
+                fill((Math.sin(t / 10) + 1) * 50, 100, 100)
+                ellipse(meteor[0], meteor[1], 50, 50)
+
+                meteor[1] += meteor[2]
+                meteor[2] += 0.1;
+
+                if (meteor[1] > 500) {
+                    meteor[3] = false
+                    for (let i = 0; i < 15; i++) {
+                        fragments.push([250, 440, Math.random() * 10 - 5, Math.random() * -10])
+                    }
+                }
+            }
+
+            for (let i = 0; i < fragments.length; i++) {
+                let f = fragments[i]
+                fill((Math.sin((t + ((i + 1) * 6)) / 10) + 1) * 50, 100, 100)
+                ellipse(f[0], f[1], 20, 20)
+
+                f[0] += f[2]
+                f[1] += f[3]
+
+                f[3] += 0.01
+
+                if (f[0] < 0) {
+                    f[2] *= -0.9
+                    f[0] = 0
+                }
+                if (f[0] > 500) {
+                    f[2] *= -0.9
+                    f[0] = 500
+                }
+                if (f[1] < 0) {
+                    f[3] *= -0.9
+                    f[1] = 0
+                }
+                if (f[1] > 450) {
+                    f[3] *= -0.9
+                    f[1] = 450
+                }
+
+                let dist2 = dist(f[0], f[1], mouseX, mouseY)
+
+                let xgravity = 1 / dist2
+                if (mouseX > f[0]) {
+                    f[2] += xgravity
+                } else if (mouseX < f[0]) {
+                    f[2] -= xgravity
+                }
+                let ygravity = 1 / dist2
+                if (mouseY > f[1]) {
+                    f[3] += ygravity
+                } else if (mouseY < f[1]) {
+                    f[3] -= ygravity
+                }
+            }
+
+            fill(0, 0, 100)
+            if (meteor[3] == false) {
+                fill((Math.sin(t / 10) + 1) * 50, 100, 100)
+            }
+            rect(0, 450, 500, 50)
+
+            t++;
+
+            if(t>200){
+                imageMode(CENTER)
+                image(badge, 250, 800-t, 136, 157)
+                textSize(25)
+                fill(0, 0, 100)
+                textAlign(CENTER)
+                text("Congratulations Dilip Uncle on\n8 years and 9 months in the\nVictorian Police Department!", 250, 890-t)
+            }
+
+            t=Math.min(t, 710)
+        }
+    </script>
+</body>
+
+</html>
